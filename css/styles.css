@@ -184,7 +184,7 @@ main {
   }
 
   .speed-control{
-    width: 70%;
+    width: 50%;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -198,7 +198,7 @@ main {
   }
   
   input[type="range"] {
-    width: 80%;
+    width: 85%;
   }
 
   .graph {

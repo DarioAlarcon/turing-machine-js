@@ -264,7 +264,7 @@ myDiagram.nodeTemplate =
     myDiagram.model.addNodeData({ key: "_",  name: "" , color: "transparent", loc: "-1100 -10" });
     myDiagram.model.addNodeData({ key: "q0",  name: "q0" , color: "purple", loc: "-1030 -10" });
     myDiagram.model.addNodeData({ key: "q1",  name: "q1" , color: "purple",   loc: "-960 -10"  });
-    myDiagram.model.addNodeData({ key: "q2",  name: "q2" , color: "red", loc: "-890 -10"  });
+    myDiagram.model.addNodeData({ key: "q2",  name: "q2" , color: "purple", loc: "-890 -10"  });
     
     myDiagram.model.addNodeData({ key: "T2", color:"transparent", loc: "-995 -10"  });
     myDiagram.model.addNodeData({ key: "T4", color:"transparent", loc: "-925 -10"  });
@@ -294,7 +294,7 @@ myDiagram.linkTemplate =
     );
 
 myDiagram.model.addLinkData({ from: "_",  to: "q0"  });
-myDiagram.model.addLinkData({ from: "q0",  to: "q0"  , text: "\n\na/a/R\nb/b/R ", key:"T1"});
+myDiagram.model.addLinkData({ from: "q0",  to: "q0"  , text: "\n\na/a/R\nb/a/R ", key:"T1"});
 myDiagram.model.addLinkData({ from: "q0",  to: "q1"  , text: "B/B/L\n\n", key:"T2"});
 myDiagram.model.addLinkData({ from: "q1",  to: "q1"  , text: "\na/a/L", key:"T3"});
 myDiagram.model.addLinkData({ from: "q1",  to: "q2"  , text: "B/B/R\n\n", key:"T4"});
