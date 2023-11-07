@@ -198,7 +198,7 @@ main {
   }
   
   input[type="range"] {
-    width: 85%;
+    width: 80%;
   }
 
   .graph {
