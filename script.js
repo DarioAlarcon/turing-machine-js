@@ -1,153 +1,133 @@
 const symbolSpan = document.getElementById('symbol-checking')
 const symbolOrderSpan = document.getElementById('symbol-checking-number')
 
-class PDA {
+class turingMachine {
   constructor(transitions) {
-    this.stack = ["#"];
+    this.tape = [];
     this.currentState = 'q0';
-    this.inputlength=0; 
     this.transitions= transitions
+    this.headPosition = 1
+    this.movementcount = 0
   }
 }
 const transitions = {
   q0: {
-    'a': [
-      { key: 'T2' ,nextState: 'q1', pop: "a" },
-      { key: 'T1' ,nextState: 'q0', pop: "#", push: '#a' },
-      { key: 'T1' ,nextState: 'q0', pop: "a", push: 'aa' },
-      { key: 'T1' ,nextState: 'q0', pop: "b", push: 'ba' },
-    ],
-    'b': [
-      { key: 'T2' ,nextState: 'q1', pop: "b" },
-      { key: 'T1' ,nextState: 'q0', pop: "#", push: '#b' },
-      { key: 'T1' ,nextState: 'q0', pop: "a", push: 'ab' },
-      { key: 'T1' ,nextState: 'q0', pop: "b", push: 'bb' },
-    ]
+      'a': [
+          { key: 'T1', nextState: 'q0', move: "Right", changedSymbol: 'a' },
+      ],
+      'b': [
+          { key: 'T1', nextState: 'q0', move: "Right", changedSymbol: 'a' },
+      ],
+      ' ': [
+          { key: 'T2', nextState: 'q1', move: "Left", changedSymbol: ' ' },
+      ]
   },
   q1: {
-    'a': [{ key: 'T3' ,nextState: 'q1', pop: 'a' }],
-    'b': [{ key: 'T3' ,nextState: 'q1', pop: 'b' }],
-    ' ': [{ key: 'T4' ,nextState: 'q2', pop: '#', push: '#' }]
+      'a': [
+          { key: 'T3', nextState: 'q1', move: "Left", changedSymbol: 'a' },
+      ],
+      ' ': [
+          { key: 'T4', nextState: 'q2', move: "Right", changedSymbol: ' ' },
+      ]
   },
   q2: {}
 };
 
-const pda = new PDA(transitions);
+const TM = new turingMachine(transitions);
+const boxContainer = document.querySelector('.item-container');
+var items = [" "," "," ", " ", " ", " ", " ", " ", " ", " "];
 
-async function wordChecking(symbolToCheck, symbolOrder){
-  symbolSpan.innerText = symbolToCheck;
-  symbolOrderSpan.innerText = symbolOrder;
-  await sleep(get_speed())
-  console.log(pda.transitions)
-  const stateTransitions = pda.transitions[pda.currentState][symbolToCheck];
-  if (!stateTransitions) {
+function convertStringIntoArray(stringInput){
+  TM.tape = stringInput.split('')
+  
+}
+
+
+async function wordChecking(symbol){
+  console.log(symbol)
+  if(!TM.transitions[TM.currentState][symbol]){
       return false
   }
-  let validTransition = findValidTransition(stateTransitions)
-  if (!validTransition) {
-      return false;
+  const validtransition = (TM.transitions[TM.currentState][symbol][0])
+  if(!validtransition){
+      return false
   }
-  var keyNodeTransiction=highlightLinkBetweenNodes(pda.currentState,validTransition.nextState)
-  console.log(keyNodeTransiction)
-
-  await applyTransition(validTransition, keyNodeTransiction)
-  await sleep(get_speed()) 
-  pda.currentState = validTransition.nextState;
-  showCurrentNodeGraph(pda.currentState)
-}
-
-function findValidTransition(stateTransitions){
-  let  validTransition=null;
-  for (const transition of stateTransitions) {
-      if (!transition.pop || transition.pop === pda.stack[pda.stack.length - 1]) {
-          if(!transition.push){
-              if(pda.stack.length > pda.inputlength/2){
-                validTransition = transition;
-                break
-              }
-          }
-        validTransition= transition;
-      }
-  }
-  return validTransition;
-}
-
-async function applyTransition(transition, keyNodeTransiction) {
-  pda.currentState = transition.nextState;
-  showCurrentNodeGraph(keyNodeTransiction)
+  var keyNodeTransition = highlightLinkBetweenNodes(TM.currentState, validtransition.nextState)
+  await applyTransition(validtransition, keyNodeTransition)
   await sleep(get_speed())
-  if (transition.pop) {
-      popFromStack(transition.pop);
-      await sleep(get_speed())
-  }
-  if (transition.push) {
-      await pushToStack(transition.push);
-      await sleep(get_speed())
-  }
+  TM.currentState=validtransition.nextState
+  showCurrentNodeGraph(TM.currentState)
 }
 
-async function popFromStack(symbol) {
-  const popped = pda.stack.pop();
-  if (popped !== symbol) {
-      return false;
-  }
-  deleteItemIntoStack(pda.stack)
-}
-
-async function pushToStack(symbols) {
-  pushCharacters = symbols.split('');
-  pushCharacters.forEach( async char => {
-      pda.stack.push(char);
-      await createStack(char);
-  });
-}
-
-async function accept(input) {
-  pda.inputlength = input.length;
-  reset();
+async function applyTransition(transition, keyNodeTransition){
+  TM.currentState=transition.nextState
   await sleep(get_speed())
-  console.log(pda.currentState)
-  let symbolOrder = 1;
-  for (const symbol of input) {
-    await wordChecking(symbol, symbolOrder);
-    symbolOrder = symbolOrder+1;
+  showCurrentNodeGraph(keyNodeTransition)
+  await sleep(get_speed())
+  TM.tape[TM.headPosition]=transition.changedSymbol
+  updateTape()
+  await sleep(get_speed())
+  TM.headPosition = (transition.move == "Right")? TM.headPosition+1:TM.headPosition-1
+  if(transition.move == "Right"){
+    moveToRight()
+    await sleep(get_speed())
   }
-  console.log(pda.stack.length)
-  return pda.currentState === 'q2' && pda.stack.length === 1;
+  if(transition.move == "Left"){
+    moveToLeft()
+    await sleep(get_speed())
+  }
+  TM.movementcount=TM.movementcount+1
 }
 
-function reset() {
-  pda.currentState = 'q0';
-  showCurrentNodeGraph(pda.currentState)
-  pda.stack = ["#"];
-  deleteItemIntoStack(pda.stack)
+
+async function accept(){
+  await sleep(get_speed());
+  for (let i = 0; i < TM.tape.length*2-2; i++) {
+      await wordChecking(TM.tape[TM.headPosition])
+  }
+  return TM.currentState === 'q2' && TM.headPosition === 1 && TM.movementcount == TM.tape.length*2-2
+}
+
+function reset(){
+  TM.movementcount = 0
+  TM.currentState = 'q0'
+  showCurrentNodeGraph(TM.currentState)
+  TM.tape = []
+  TM.headPosition = 1
 }
 //************************************************************************************************************************************************* */
-function createStackItem(symbolPush){
-  const item = document.createElement('div');
-  item.id = 'stack-item'; 
-  item.textContent = symbolPush;
-  return item;
+let currentPosition = -60;
+
+function moveToRight(){
+    currentPosition -= 60;
+    console.log(currentPosition) // Ancho del cuadrito más el margen
+    boxContainer.style.transform = `translateX(${currentPosition}px)`;
 }
 
-function insertItemIntoStack(paragraph){
-  const container = document.getElementById('stack');
-  container.appendChild(paragraph);
+function moveToLeft(){
+    currentPosition += 60;
+    console.log(currentPosition)
+    boxContainer.style.transform = `translateX(${currentPosition}px)`;
 }
 
-async function createStack(symbolPush){
-  var stackItem = createStackItem(symbolPush);
-  insertItemIntoStack(stackItem)
-  await sleep(get_speed())
+function updateTape(){
+  items = [" "," "," ", " ", " ", " ", " ", " ", " ", " "]
+  items.splice(3,0, ...TM.tape)
+  boxContainer.innerHTML = ""
+  items.forEach(item => {
+    console.log(items)
+    const box = document.createElement('div');
+        box.className = 'tape-item';
+        box.innerText = item;
+        boxContainer.appendChild(box);
+    });
 }
-
-function deleteItemIntoStack(stack){
-  const container = document.getElementById('stack');
-  container.innerHTML = "";
-  for(const item of stack){
-      createStack(item)
-  }
-}
+items.forEach(item => {
+  const box = document.createElement('div');
+  box.className = 'tape-item';
+  box.innerText = item;
+  boxContainer.appendChild(box);
+});
 //*************************************************************************************************************************************************************************** */
 
 function sleep(ms) {
@@ -314,10 +294,10 @@ myDiagram.linkTemplate =
     );
 
 myDiagram.model.addLinkData({ from: "_",  to: "q0"  });
-myDiagram.model.addLinkData({ from: "q0",  to: "q0"  , text: "\n\n\n\n\n\nb, b/bb\na, b/ba\nb, a/ab\na, a/aa\nb, #/#b\na, #/#a ", key:"T1"});
-myDiagram.model.addLinkData({ from: "q0",  to: "q1"  , text: "b, b/λ\na,a/λ\n\n\n", key:"T2"});
-myDiagram.model.addLinkData({ from: "q1",  to: "q1"  , text: "\n\nb, b/λ\na,a/λ", key:"T3"});
-myDiagram.model.addLinkData({ from: "q1",  to: "q2"  , text: "λ, #/#\n\n", key:"T4"});
+myDiagram.model.addLinkData({ from: "q0",  to: "q0"  , text: "\n\na/a/R\nb/b/R ", key:"T1"});
+myDiagram.model.addLinkData({ from: "q0",  to: "q1"  , text: "B/B/L\n\n", key:"T2"});
+myDiagram.model.addLinkData({ from: "q1",  to: "q1"  , text: "\na/a/L", key:"T3"});
+myDiagram.model.addLinkData({ from: "q1",  to: "q2"  , text: "B/B/R\n\n", key:"T4"});
     
     
 async function showCurrentNodeGraph(key) {
@@ -366,7 +346,7 @@ document.addEventListener("DOMContentLoaded", function() {
     changeLanguage('en');
     var botton = document.getElementById("word-button");
     var input = document.getElementById("word-text");
-    deleteItemIntoStack(pda.stack)
+    
 
 
     botton.addEventListener("click", handleButtonClick);
@@ -388,16 +368,19 @@ document.addEventListener("DOMContentLoaded", function() {
       }
 
       async function processString(wordToValidate) { 
-        const isAccepted = await accept(wordToValidate+" ")
+        reset()
+        convertStringIntoArray(" "+wordToValidate+" ")
+        updateTape()
+        const isAccepted = await accept()
         if (!isAccepted) {
             speakResult(false);
             createHistoryTile(wordToValidate, false);
             return;
          }
       
-         showCurrentNodeGraph(pda.currentState)
+         showCurrentNodeGraph(TM.currentState)
          speakResult(isAccepted);
          createHistoryTile(wordToValidate, isAccepted);   
-    }
+        }
       
 });
