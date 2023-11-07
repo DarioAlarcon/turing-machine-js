@@ -2,7 +2,7 @@ const languages = {
     en: {
         textInput: 'Enter your word',
         buttomText: 'Go!',
-        aboutRegularExpression: 'enter palindromic words of long pair',
+        aboutRegularExpression: 'turing machine to change b\'s to a\'s',
         historyTittle: 'History',
         spanishOption: 'Spanish',
         englishOption: 'English',
@@ -11,7 +11,7 @@ const languages = {
     es: {
         textInput: 'Ingresa tu palabra',
         buttomText: '¡Vamos!',
-        aboutRegularExpression: 'valida palabras palindromas de largo par',
+        aboutRegularExpression: 'Maquina de Turing para cambiar las b\'s por a\'s',
         historyTittle: 'Historial',
         spanishOption: 'Español',
         englishOption: 'Ingles',
@@ -20,7 +20,7 @@ const languages = {
     fr: {
         textInput: 'Entrez votre mot',
         buttomText: 'Allons-y!',
-        aboutRegularExpression: 'entrer des mots palindromiques de long par',
+        aboutRegularExpression: 'machine de turing pour changer les b en a',
         historyTittle: 'Histoire',
         spanishOption: 'Espagnol',
         englishOption: 'Anglais',
