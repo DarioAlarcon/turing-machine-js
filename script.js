@@ -94,6 +94,8 @@ function reset(){
   showCurrentNodeGraph(TM.currentState)
   TM.tape = []
   TM.headPosition = 1
+  currentPosition = -60;
+  boxContainer.style.transform = `translateX(${currentPosition}px)`
 }
 //************************************************************************************************************************************************* */
 let currentPosition = -60;

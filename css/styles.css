@@ -153,9 +153,9 @@ main {
   }
 
   .w-information{
-    width: 30%;
+    width: 60%;
     display: flex;
-    justify-content: end;
+    justify-content: center;
     align-items: center;
   }
 
