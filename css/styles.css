@@ -103,6 +103,18 @@ header{
     cursor: pointer;
 }
 
+#step-button{
+  color: var(--just-white);
+  font-size: 20px;
+  font-weight: bold;
+  background-color: var(--main-purple);
+  border: none;
+  height: 40px;
+  min-width: 90px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .word-button:hover{
     background-color: var(--word-purple);
 }
@@ -150,6 +162,7 @@ main {
     height: 80px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 
   .w-information{

@@ -330,7 +330,7 @@ function highlightLinkBetweenNodes(startNodeKey, endNodeKey) {
   }
 /************************************************************************************************************************************************************************** */
 const selectLanguageDom = document.getElementById('languanges-select')
-
+var valorInput;
 selectLanguageDom.addEventListener('change', handleLanguageChange )
 
 function handleLanguageChange(){
@@ -348,10 +348,45 @@ document.addEventListener("DOMContentLoaded", function() {
     changeLanguage('en');
     var botton = document.getElementById("word-button");
     var input = document.getElementById("word-text");
-    
+    var stepBotton = document.getElementById("step-button")
+    var times = 0
 
-
+    stepBotton.addEventListener("click", stepByStep);
     botton.addEventListener("click", handleButtonClick);
+
+    async function stepByStep() {
+    var verify = true 
+      if(times == 0){
+        valorInput = input.value
+        console.log("hola")
+        displayExpression(valorInput);
+        clearInput();
+        reset()
+        convertStringIntoArray(" "+valorInput+" ")
+        updateTape()
+        verify = await processStringStep()
+        times +=1;
+      }else{
+        verify = await processStringStep()
+        times +=1;
+      }
+      console.log(verify)
+      if(times>TM.tape.length*2-2 || verify == false){
+        isAccepted =  TM.currentState === 'q2' && TM.headPosition === 1 && TM.movementcount == TM.tape.length*2-2
+        if (!isAccepted) {
+          speakResult(false);
+          createHistoryTile(valorInput, false);
+          times = 0
+          return;
+       }
+    
+       showCurrentNodeGraph(TM.currentState)
+       speakResult(isAccepted);
+       createHistoryTile(valorInput, isAccepted); 
+       times = 0  
+      }
+
+    }
 
     function handleButtonClick() {
         const valorInput = input.value;
@@ -383,6 +418,13 @@ document.addEventListener("DOMContentLoaded", function() {
          showCurrentNodeGraph(TM.currentState)
          speakResult(isAccepted);
          createHistoryTile(wordToValidate, isAccepted);   
+        }
+
+        async function processStringStep() { 
+          var sol = await wordChecking(TM.tape[TM.headPosition]) 
+          if (sol == false){
+            return false;
+          }
         }
       
 });

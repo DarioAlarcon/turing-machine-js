@@ -2,6 +2,7 @@ const languages = {
     en: {
         textInput: 'Enter your word',
         buttomText: 'Go!',
+        stepText: '1 step',
         aboutRegularExpression: 'turing machine to change b\'s to a\'s',
         historyTittle: 'History',
         spanishOption: 'Spanish',
@@ -11,6 +12,7 @@ const languages = {
     es: {
         textInput: 'Ingresa tu palabra',
         buttomText: '¡Vamos!',
+        stepText: '1 paso',
         aboutRegularExpression: 'Maquina de Turing para cambiar las b\'s por a\'s',
         historyTittle: 'Historial',
         spanishOption: 'Español',
@@ -20,6 +22,7 @@ const languages = {
     fr: {
         textInput: 'Entrez votre mot',
         buttomText: 'Allons-y!',
+        stepText: '1 pas',
         aboutRegularExpression: 'machine de turing pour changer les b en a',
         historyTittle: 'Histoire',
         spanishOption: 'Espagnol',
@@ -37,4 +40,5 @@ function changeLanguage(language) {
     document.getElementById('French').textContent = currentLanguage.frenchOption;
     document.getElementById('historyTittle').textContent = currentLanguage.historyTittle;
     document.getElementById('regularExpressionInfo').textContent = currentLanguage.aboutRegularExpression;
+    document.getElementById('step-button').textContent = currentLanguage.stepText
 }
